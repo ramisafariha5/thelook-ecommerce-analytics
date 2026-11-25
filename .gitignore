@@ -1,0 +1,9 @@
+venv/
+target/
+dbt_packages/
+logs/
+.ipynb_checkpoints/
+.DS_Store
+.env
+*.json
+!analysis/*.ipynb

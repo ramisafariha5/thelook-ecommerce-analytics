@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: fct_order_items
+    description: "One row per order item. Revenue counts only items that are not Cancelled or Returned."
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_users')
+              field: user_id
+      - name: item_status
+        data_tests:
+          - accepted_values:
+              values: ['Processing', 'Shipped', 'Complete', 'Returned', 'Cancelled']
+      - name: is_valid_revenue
+        description: "True when the item is not Cancelled or Returned."
+      - name: revenue
+        description: "sale_price when is_valid_revenue, otherwise 0."
+
+  - name: dim_users
+    description: "One row per user, with conversion flags and lifetime value."
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+      - name: has_order_before_signup
+        description: "Data-quality flag: first valid order is earlier than sign-up. Excluded from analysis."
+      - name: is_eligible_for_30d
+        description: "True if the user signed up at least 30 days ago, so the 30-day window is fully observed."
+      - name: converted_30d
+        description: "True if the first valid order was within 30 days after sign-up. Only meaningful where is_eligible_for_30d is true."
+
+  - name: mart_cohort_retention
+    description: "Share of each sign-up month cohort placing a valid order in each 30-day window after sign-up. Windows appear only once fully observed."
+    columns:
+      - name: period_30d
+        description: "0 = days 0-29 after sign-up, 1 = days 30-59, and so on."
+      - name: retention_rate
+        description: "active_users / cohort_users."
