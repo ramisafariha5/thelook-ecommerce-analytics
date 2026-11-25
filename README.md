@@ -15,7 +15,7 @@ BigQuery public dataset `bigquery-public-data.thelook_ecommerce` (users, orders,
 
 ## Architecture
 
-![dbt lineage](images/dbt_lineage_graph.png)
+![dbt lineage](images/lineage.png)
 
 | Layer | Model | Purpose |
 |---|---|---|
